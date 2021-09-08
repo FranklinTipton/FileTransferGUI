@@ -4,6 +4,7 @@ Add-Type -AssemblyName System.Drawing
 
 ### Define Controls ###
 
+$null = $OriginalLocation.ShowDialog()
 
 # Main GUI appearance 
 $form = New-Object System.Windows.Forms.Form
@@ -19,6 +20,8 @@ $OriginalLocation.Size = New-Object System.Drawing.Size(240,200)
 $OriginalLocation.Anchor = ([System.Windows.Forms.AnchorStyles]::Bottom -bor [System.Windows.Forms.AnchorStyles]::Left -bor [System.Windows.Forms.AnchorStyles]::Right -bor [System.Windows.Forms.AnchorStyles]::Top)
 $OriginalLocation.IntegralHeight = $False
 $OriginalLocation.AllowDrop = $True
+
+$OriginalLocation.controls.AddRange(@($OriginalLocation))
 
 # Label for Original location
 $LabelOL = New-Object System.Windows.Forms.Label
@@ -51,7 +54,17 @@ $BrowseButton = New-Object System.Windows.Forms.Button
 $BrowseButton.Location = New-Object System.Drawing.Size(20,10)
 $BrowseButton.Size = New-Object System.Drawing.Size(80,20)
 $BrowseButton.Text = "Browse Files"
-$BrowseButton.Add_Click({explorer.exe})
+$BrowseButton.Add_Click({
+	Add-Type -AssemblyName System.windows.forms | Out-Null
+	$OpenDialog = New-Object -TypeName System.Windows.Forms.OpenFileDialog
+	#Initiate browse path can be set by using initialDirectory
+	$OpenDialog.initialDirectory = $initialDirectory
+	$OpenDialog.ShowDialog() | Out-Null
+	$filePath = $OpenDialog.filename
+	#Assigining the file choosen path to the text box
+	$OriginalLocation.Text = $filePath 
+	$OriginalLocation.Refresh()
+	})
 
 ### Add forms ###
 $form.SuspendLayout()
