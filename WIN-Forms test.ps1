@@ -2,9 +2,11 @@
 Add-type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-### Define Controls ###
+## Variables
 
-$null = $OriginalLocation.ShowDialog()
+$InitialDirectory = "C:\"
+
+### Define Controls ###
 
 # Main GUI appearance 
 $form = New-Object System.Windows.Forms.Form
@@ -21,6 +23,8 @@ $OriginalLocation.Anchor = ([System.Windows.Forms.AnchorStyles]::Bottom -bor [Sy
 $OriginalLocation.IntegralHeight = $False
 $OriginalLocation.AllowDrop = $True
 
+
+## What is this?
 $OriginalLocation.controls.AddRange(@($OriginalLocation))
 
 # Label for Original location
@@ -31,7 +35,7 @@ $LabelOL.BackColor = "Transparent"
 $LabelOL.AutoSize = $true
 
 # Create New Location --Move to the right of GUI
-$NewLocation = New-Object System.Windows.Forms.TextBox
+$NewLocation = New-Object System.Windows.Forms.ComboBox
 $NewLocation.Location = New-Object System.Drawing.Size(300,50)
 $NewLocation.Size = New-Object System.Drawing.Size(200,20)
 
@@ -61,10 +65,11 @@ $BrowseButton.Add_Click({
 	$OpenDialog.initialDirectory = $initialDirectory
 	$OpenDialog.ShowDialog() | Out-Null
 	$filePath = $OpenDialog.filename
+	$filePath.ListBox.value = $OriginalLocation
 	#Assigining the file choosen path to the text box
 	$OriginalLocation.Text = $filePath 
 	$OriginalLocation.Refresh()
-	})
+})
 
 ### Add forms ###
 $form.SuspendLayout()
@@ -77,6 +82,19 @@ $form.controls.add($BrowseButton)
 $form.ResumeLayout()
 
 ### Functions ###
+
+function CopyButton {
+	$input = $OriginalLocation.Text
+	
+}
+
+$Locations = @("Server 1","Server 2","Server 3")
+
+foreach($Location in $Locations){
+
+$NewLocation.Items.Add($Location)
+
+}
 
 $OriginalLocation_DragOver = [System.Windows.Forms.DragEventHandler]{
 	if ($_.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop)) # $_ = [System.Windows.Forms.DragEventArgs]
