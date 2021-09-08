@@ -2,6 +2,10 @@
 Add-type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
+## Variables
+
+$InitialDirectory = "C:\"
+
 ### Define Controls ###
 
 # Main GUI appearance 
@@ -19,6 +23,10 @@ $OriginalLocation.Anchor = ([System.Windows.Forms.AnchorStyles]::Bottom -bor [Sy
 $OriginalLocation.IntegralHeight = $False
 $OriginalLocation.AllowDrop = $True
 
+
+## What is this?
+$OriginalLocation.controls.AddRange(@($OriginalLocation))
+
 # Label for Original location
 $LabelOL = New-Object System.Windows.Forms.Label
 $LabelOL.text = "Files to be copied (Drag and Drop):"
@@ -27,7 +35,7 @@ $LabelOL.BackColor = "Transparent"
 $LabelOL.AutoSize = $true
 
 # Create New Location --Move to the right of GUI
-$NewLocation = New-Object System.Windows.Forms.TextBox
+$NewLocation = New-Object System.Windows.Forms.ComboBox
 $NewLocation.Location = New-Object System.Drawing.Size(300,50)
 $NewLocation.Size = New-Object System.Drawing.Size(200,20)
 
@@ -38,12 +46,30 @@ $LabelNL.Location = New-Object System.Drawing.Size(300,30)
 $LabelNL.BackColor = "Transparent"
 $LabelNL.AutoSize = $true
 
-# Create the Copy Button !! CHANGE LOCATION AND SIZE !!
+# Create the Copy Button 
 $CopyButton = New-Object System.Windows.Forms.Button
 $CopyButton.Location = New-Object System.Drawing.Size(20,335)
 $CopyButton.Size = New-Object System.Drawing.Size(200,20)
 $CopyButton.Text = "Copy Files"
-$CopyButton.Add_Click({Copy-Button})
+$CopyButton.Add_Click({Copy-Item "$OriginalLocation" -Destination "$NewLocation" -Recurse})
+
+# Create the Browse Button !! Add File Browser on add_click
+$BrowseButton = New-Object System.Windows.Forms.Button
+$BrowseButton.Location = New-Object System.Drawing.Size(20,10)
+$BrowseButton.Size = New-Object System.Drawing.Size(80,20)
+$BrowseButton.Text = "Browse Files"
+$BrowseButton.Add_Click({
+	Add-Type -AssemblyName System.windows.forms | Out-Null
+	$OpenDialog = New-Object -TypeName System.Windows.Forms.OpenFileDialog
+	#Initiate browse path can be set by using initialDirectory
+	$OpenDialog.initialDirectory = $initialDirectory
+	$OpenDialog.ShowDialog() | Out-Null
+	$filePath = $OpenDialog.filename
+	$filePath.ListBox.value = $OriginalLocation
+	#Assigining the file choosen path to the text box
+	$OriginalLocation.Text = $filePath 
+	$OriginalLocation.Refresh()
+})
 
 ### Add forms ###
 $form.SuspendLayout()
@@ -52,12 +78,22 @@ $form.Controls.Add($LabelOL)
 $form.controls.Add($NewLocation)
 $form.Controls.Add($LabelNL)
 $form.controls.add($CopyButton)
+$form.controls.add($BrowseButton)
 $form.ResumeLayout()
 
 ### Functions ###
 
-function Copy-Button {
-    Copy-Item "$OriginalLocation" -Destination "$NewLocation"
+function CopyButton {
+	$input = $OriginalLocation.Text
+	
+}
+
+$Locations = @("Server 1","Server 2","Server 3")
+
+foreach($Location in $Locations){
+
+$NewLocation.Items.Add($Location)
+
 }
 
 $OriginalLocation_DragOver = [System.Windows.Forms.DragEventHandler]{
