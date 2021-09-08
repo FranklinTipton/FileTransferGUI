@@ -4,6 +4,7 @@ Add-Type -AssemblyName System.Drawing
 
 ### Define Controls ###
 
+
 # Main GUI appearance 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'GUI to transfer files from one machine to another'
@@ -38,12 +39,19 @@ $LabelNL.Location = New-Object System.Drawing.Size(300,30)
 $LabelNL.BackColor = "Transparent"
 $LabelNL.AutoSize = $true
 
-# Create the Copy Button !! CHANGE LOCATION AND SIZE !!
+# Create the Copy Button 
 $CopyButton = New-Object System.Windows.Forms.Button
 $CopyButton.Location = New-Object System.Drawing.Size(20,335)
 $CopyButton.Size = New-Object System.Drawing.Size(200,20)
 $CopyButton.Text = "Copy Files"
-$CopyButton.Add_Click({Copy-Button})
+$CopyButton.Add_Click({Copy-Item "$OriginalLocation" -Destination "$NewLocation" -Recurse})
+
+# Create the Browse Button !! Add File Browser on add_click
+$BrowseButton = New-Object System.Windows.Forms.Button
+$BrowseButton.Location = New-Object System.Drawing.Size(20,10)
+$BrowseButton.Size = New-Object System.Drawing.Size(80,20)
+$BrowseButton.Text = "Browse Files"
+$BrowseButton.Add_Click({explorer.exe})
 
 ### Add forms ###
 $form.SuspendLayout()
@@ -52,13 +60,10 @@ $form.Controls.Add($LabelOL)
 $form.controls.Add($NewLocation)
 $form.Controls.Add($LabelNL)
 $form.controls.add($CopyButton)
+$form.controls.add($BrowseButton)
 $form.ResumeLayout()
 
 ### Functions ###
-
-function Copy-Button {
-    Copy-Item "$OriginalLocation" -Destination "$NewLocation"
-}
 
 $OriginalLocation_DragOver = [System.Windows.Forms.DragEventHandler]{
 	if ($_.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop)) # $_ = [System.Windows.Forms.DragEventArgs]
