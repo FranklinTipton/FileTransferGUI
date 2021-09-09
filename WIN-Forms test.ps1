@@ -65,10 +65,10 @@ $BrowseButton.Add_Click({
 	$OpenDialog.initialDirectory = $initialDirectory
 	$OpenDialog.ShowDialog() | Out-Null
 	$filePath = $OpenDialog.filename
-	$filePath.ListBox.value = $OriginalLocation
+	#$filePath.ListBox.value = $OriginalLocation
 	#Assigining the file choosen path to the text box
-	$OriginalLocation.List = $filePath 
-	Write-Host $filePath
+	#$OriginalLocation.List = $filePath 
+	$OriginalLocation.Items.Add($filePath)
 	$OriginalLocation.Refresh()
 })
 
