@@ -51,7 +51,7 @@ $CopyButton = New-Object System.Windows.Forms.Button
 $CopyButton.Location = New-Object System.Drawing.Size(20,335)
 $CopyButton.Size = New-Object System.Drawing.Size(200,20)
 $CopyButton.Text = "Copy Files"
-$CopyButton.Add_Click({Copy-Item "$OriginalLocation" -Destination "$NewLocation" -Recurse})
+$CopyButton.Add_Click({CopyButton})
 
 # Create the Browse Button !! Add File Browser on add_click
 $BrowseButton = New-Object System.Windows.Forms.Button
@@ -67,7 +67,8 @@ $BrowseButton.Add_Click({
 	$filePath = $OpenDialog.filename
 	$filePath.ListBox.value = $OriginalLocation
 	#Assigining the file choosen path to the text box
-	$OriginalLocation.Text = $filePath 
+	$OriginalLocation.List = $filePath 
+	Write-Host $filePath
 	$OriginalLocation.Refresh()
 })
 
@@ -83,17 +84,32 @@ $form.ResumeLayout()
 
 ### Functions ###
 
-function CopyButton {
-	$input = $OriginalLocation.Text
-	
-}
-
 $Locations = @("Server 1","Server 2","Server 3")
 
 foreach($Location in $Locations){
 
 $NewLocation.Items.Add($Location)
 
+}
+function CopyButton {
+
+	$selection = $NewLocation.SelectedItem.Equals()
+
+	$input = $OriginalLocation.text
+
+	if($selection -eq "Server 1"){
+
+		Copy-Item "$input" -Destination "C:\Test" -Recurse
+
+	}
+	elseif($selection -eq "Server 2"){
+
+		
+	}
+	elseif($selection -eq "Server 3"){
+
+		
+	}
 }
 
 $OriginalLocation_DragOver = [System.Windows.Forms.DragEventHandler]{
